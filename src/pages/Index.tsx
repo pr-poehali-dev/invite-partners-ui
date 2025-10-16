@@ -125,10 +125,10 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/20">
       {/* Main Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
+      <aside className="w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200/50 flex flex-col shadow-lg">
+        <div className="p-6 border-b border-gray-200/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center shadow-lg">
               <Icon name="Building2" size={20} className="text-white" />
@@ -172,7 +172,7 @@ const Index = () => {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="p-4 border-t border-gray-200/50 space-y-2">
           <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg text-left">
             <Icon name="Settings" size={20} />
             <span className="text-sm">Настройки</span>
@@ -183,7 +183,7 @@ const Index = () => {
           </button>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200/50">
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
@@ -196,7 +196,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200/50">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center text-white text-sm font-semibold">
               ДД
@@ -211,8 +211,8 @@ const Index = () => {
 
       {/* Secondary Sidebar */}
       {activeMenu === 'documents' && (
-        <aside className="w-64 bg-white border-r border-gray-200">
-          <div className="p-6 border-b border-gray-200">
+        <aside className="w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200/50 shadow-lg">
+          <div className="p-6 border-b border-gray-200/50">
             <h2 className="font-semibold text-lg">Документы</h2>
           </div>
           <nav className="p-4">
@@ -244,7 +244,7 @@ const Index = () => {
       <main className="flex-1 overflow-auto">
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-8 py-6">
+          <div className="bg-white/70 backdrop-blur-xl border-b border-gray-200/50 px-8 py-8">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold">Входящие документы</h1>
               <div className="flex items-center gap-3">
@@ -274,7 +274,7 @@ const Index = () => {
           </div>
 
           {/* Toolbar */}
-          <div className="bg-white border-b border-gray-200 px-8 py-3">
+          <div className="bg-white/70 backdrop-blur-xl border-b border-gray-200/50 px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="sm" className="gap-2">
@@ -310,7 +310,7 @@ const Index = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white px-8 py-3 border-b border-gray-100">
+          <div className="bg-white/70 backdrop-blur-xl px-8 py-4 border-b border-gray-100/50">
             <div className="text-sm text-muted-foreground">
               Отправитель: <button className="text-primary hover:underline ml-1">Все</button> • 
               <span className="ml-2">Документы: <button className="text-primary hover:underline ml-1">Все</button></span> • 
@@ -320,11 +320,11 @@ const Index = () => {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto bg-white">
-            <div className="px-8">
+          <div className="flex-1 overflow-auto bg-gradient-to-b from-white/70 to-white/50">
+            <div className="px-8 py-4">
               <table className="w-full">
-                <thead className="sticky top-0 bg-white z-10">
-                  <tr className="border-b border-gray-200">
+                <thead className="sticky top-0 bg-white/90 backdrop-blur-xl z-10">
+                  <tr className="border-b border-gray-200/50">
                     <th className="text-left py-3 px-4 w-10">
                       <input
                         type="checkbox"
@@ -358,7 +358,7 @@ const Index = () => {
                   {mockDocuments.map((doc) => (
                     <tr 
                       key={doc.id} 
-                      className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                      className="border-b border-gray-100/50 hover:bg-white/60 cursor-pointer transition-colors"
                     >
                       <td className="py-4 px-4">
                         <input
