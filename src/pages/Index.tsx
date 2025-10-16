@@ -2,9 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Counterparty {
   id: string;
@@ -13,40 +18,54 @@ interface Counterparty {
   kpp: string;
   address: string;
   status: 'invite' | 'accept' | 'in_list';
+  date: string;
 }
 
 const mockCounterparties: Counterparty[] = [
   {
     id: '1',
-    name: 'ООО "Какая-то длинная рекламная компания"',
+    name: 'ООО "Рога и копыта"',
     inn: '4693801631',
     kpp: '0474273962',
     address: 'г. Москва, ул. Тверская, д. 15, офис 302',
-    status: 'invite'
+    status: 'invite',
+    date: '01.01.2025'
   },
   {
     id: '2',
-    name: 'ООО "Какая-то длинная рекламная компания"',
+    name: 'Дмитриев Дмитрий Дмитриевич',
     inn: '4693801631',
     kpp: '0474273962',
     address: 'г. Москва, ул. Тверская, д. 15, офис 302',
-    status: 'invite'
+    status: 'invite',
+    date: '12.05.2025'
   },
   {
     id: '3',
-    name: 'ООО "Какая-то длинная рекламная компания"',
+    name: 'ООО "Какое-то очень длинное название компании"',
     inn: '1234567890',
     kpp: '0987654321',
     address: 'г. Тульская обл., г. Новомосковск, ул. Березовая, д. 1',
-    status: 'accept'
+    status: 'accept',
+    date: '01.01.2025'
   },
   {
     id: '4',
-    name: 'ООО "Какая-то длинная рекламная компания"',
+    name: 'Дмитриев Дмитрий Дмитриевич',
     inn: '1234567890',
     kpp: '0987654321',
     address: 'г. Тульская обл., г. Новомосковск, ул. Березовая, д. 1',
-    status: 'in_list'
+    status: 'in_list',
+    date: '12.05.2025'
+  },
+  {
+    id: '5',
+    name: 'ООО "Рога и копыта"',
+    inn: '4693801631',
+    kpp: '0474273962',
+    address: 'г. Москва, ул. Тверская, д. 15, офис 302',
+    status: 'invite',
+    date: '01.01.2025'
   }
 ];
 
@@ -55,6 +74,8 @@ const Index = () => {
   const [activeMenu, setActiveMenu] = useState('counterparties');
   const [activeSubmenu, setActiveSubmenu] = useState('invite');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<'name' | 'date'>('name');
 
   const menuItems = [
     { id: 'counterparties', label: 'Контрагенты', icon: 'Users', hasSubmenu: true },
@@ -70,42 +91,26 @@ const Index = () => {
     { id: 'blocked', label: 'Заблокированные', count: 9999 }
   ];
 
-  const getStatusButton = (status: Counterparty['status']) => {
+  const toggleRowSelection = (id: string) => {
+    setSelectedRows(prev => 
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllRows = () => {
+    setSelectedRows(prev => 
+      prev.length === mockCounterparties.length ? [] : mockCounterparties.map(c => c.id)
+    );
+  };
+
+  const getStatusBadge = (status: Counterparty['status']) => {
     switch (status) {
       case 'invite':
-        return (
-          <Button className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white">
-            <Icon name="UserPlus" size={16} className="mr-2" />
-            Пригласить
-          </Button>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">Требует подписания</Badge>;
       case 'accept':
-        return (
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Icon name="X" size={16} />
-              Отклонить
-            </Button>
-            <Button
-              size="sm"
-              className="gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-90 text-white"
-            >
-              <Icon name="Check" size={16} />
-              Принять
-            </Button>
-          </div>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">Требует подписания</Badge>;
       case 'in_list':
-        return (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Icon name="Check" size={16} />
-            <span className="text-sm">В списке ваших контрагентов</span>
-          </div>
-        );
+        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Подписан контрагентом</Badge>;
     }
   };
 
@@ -239,78 +244,212 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="px-20 py-8">
-          <div className="w-full">
-            <h1 className="text-3xl font-bold mb-8">Пригласить контрагентов</h1>
-            <p className="text-muted-foreground mb-6">
-              Найдите нужных вам контрагентов любым удобным способом
-            </p>
-
-            {/* Search Section */}
-            <div className="flex gap-4 mb-8">
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200 px-8 py-6">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Пригласить контрагентов</h1>
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="sm">
+                  <Icon name="SlidersHorizontal" size={16} className="mr-2" />
+                  Фильтры
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Icon name="Download" size={16} className="mr-2" />
+                  Удалить
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Icon name="Printer" size={16} className="mr-2" />
+                  Печать
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
               <div className="flex-1 relative">
                 <Icon
                   name="Search"
-                  size={20}
+                  size={18}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
                   type="text"
-                  placeholder="Введите название организации или ИНН"
+                  placeholder="Поиск"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 text-base"
+                  className="pl-10 bg-gray-50 border-gray-200"
                 />
               </div>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white px-6"
-              >
-                <Icon name="Upload" size={20} className="mr-2" />
+              <Button className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white">
+                <Icon name="Upload" size={18} className="mr-2" />
                 Загрузить файл со списком ИНН
               </Button>
             </div>
+          </div>
 
-            {/* Results Count */}
-            <div className="mb-4">
-              <p className="text-sm text-muted-foreground">
-                Найдено контрагентов: <span className="font-semibold text-foreground">{mockCounterparties.length}</span>
-              </p>
+          {/* Toolbar */}
+          <div className="bg-white border-b border-gray-200 px-8 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <Icon name="FilePlus" size={16} />
+                      Подписать
+                      <Icon name="ChevronDown" size={14} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Подписать выбранные</DropdownMenuItem>
+                    <DropdownMenuItem>Подписать все</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <Icon name="UserPlus" size={16} />
+                      Согласовать
+                      <Icon name="ChevronDown" size={14} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Отправить на согласование</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Icon name="FileDown" size={16} />
+                  Отклонить
+                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <Icon name="Eye" size={16} />
+                      Аннулировать
+                      <Icon name="ChevronDown" size={14} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Аннулировать выбранные</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Icon name="Download" size={16} />
+                  Скачать
+                </Button>
+
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Icon name="Trash2" size={16} />
+                  Удалить
+                </Button>
+
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Icon name="Lock" size={16} />
+                  Печать
+                </Button>
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Icon name="SlidersHorizontal" size={16} />
+                    Фильтры
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Все контрагенты</DropdownMenuItem>
+                  <DropdownMenuItem>Требуют подписания</DropdownMenuItem>
+                  <DropdownMenuItem>Подписанные</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
+          </div>
 
-            {/* Counterparty Cards */}
-            <div className="space-y-4">
-              {mockCounterparties.map((counterparty) => (
-                <Card key={counterparty.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between gap-8">
-                      <div className="flex items-center gap-5 flex-1 min-w-0">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
-                          <Icon name="Building2" size={26} className="text-gray-500" />
-                        </div>
-                        <div className="flex-1 min-w-0 grid grid-cols-[2fr_1fr_1fr_2fr] gap-6 items-center">
-                          <div className="min-w-0">
-                            <h3 className="font-semibold text-base truncate">{counterparty.name}</h3>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground mb-0.5">ИНН</p>
-                            <p className="text-sm font-medium">{counterparty.inn}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground mb-0.5">КПП</p>
-                            <p className="text-sm font-medium">{counterparty.kpp}</p>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground mb-0.5">Адрес</p>
-                            <p className="text-sm font-medium truncate">{counterparty.address}</p>
-                          </div>
-                        </div>
+          {/* Table */}
+          <div className="flex-1 overflow-auto bg-white">
+            <div className="px-8 py-4">
+              <div className="text-sm text-muted-foreground mb-4">
+                Отправитель: <button className="text-primary hover:underline">Все</button> • 
+                Документы: <button className="text-primary hover:underline">Все</button> • 
+                Дата: <button className="text-primary hover:underline">Все</button> • 
+                Статус: <button className="text-primary hover:underline">Все</button>
+              </div>
+
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 w-10">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.length === mockCounterparties.length}
+                        onChange={toggleAllRows}
+                        className="rounded border-gray-300"
+                      />
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
+                      <div className="flex items-center gap-1">
+                        Отправитель
+                        <Icon name="ChevronDown" size={14} />
                       </div>
-                      <div className="flex-shrink-0">{getStatusButton(counterparty.status)}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Документы</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
+                      <div className="flex items-center gap-1">
+                        Дата
+                        <Icon name="ChevronDown" size={14} />
+                      </div>
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
+                      <div className="flex items-center gap-1">
+                        Статус
+                        <Icon name="ChevronDown" size={14} />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockCounterparties.map((counterparty) => (
+                    <tr 
+                      key={counterparty.id} 
+                      className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <td className="py-4 px-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(counterparty.id)}
+                          onChange={() => toggleRowSelection(counterparty.id)}
+                          className="rounded border-gray-300"
+                        />
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="font-medium text-sm">{counterparty.name}</div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="space-y-1">
+                          <div className="text-sm text-primary hover:underline">
+                            Счёт на оплату №{counterparty.inn.slice(0, 4)} от {counterparty.date}.pdf
+                          </div>
+                          <div className="text-sm text-primary hover:underline">
+                            Акт об оказании услуг №{counterparty.kpp.slice(0, 4)} от {counterparty.date}.pdf
+                          </div>
+                          <div className="text-sm text-primary hover:underline">
+                            Письмо№{counterparty.id} от {counterparty.date}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="text-sm">{counterparty.date}</div>
+                      </td>
+                      <td className="py-4 px-4">
+                        {getStatusBadge(counterparty.status)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
