@@ -222,34 +222,34 @@ export default function Invitations() {
                   {invitations.map((invitation) => (
                     <Card key={invitation.id} className="overflow-hidden hover:shadow-md transition-shadow">
                       <CardContent className="p-6">
-                        <div className="flex items-center justify-between gap-8">
-                          <div className="flex items-center gap-5 flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-8">
+                          <div className="flex items-start gap-5 flex-1 min-w-0">
                             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0">
                               <Icon name="Building2" size={26} className="text-blue-600" />
                             </div>
-                            <div className="flex-1 min-w-0 grid grid-cols-[2fr_1fr_1fr_2fr_1fr] gap-6 items-center">
+                            <div className="flex-1 min-w-0 grid grid-cols-[2fr_1fr_1fr_2fr_1fr] gap-6">
                               <div className="min-w-0">
-                                <h3 className="font-semibold text-base truncate">{invitation.name}</h3>
+                                <h3 className="font-semibold text-base break-words">{invitation.name}</h3>
                               </div>
                               <div>
                                 <p className="text-xs text-muted-foreground mb-0.5">ИНН</p>
-                                <p className="text-sm font-medium">{invitation.inn}</p>
+                                <p className="text-sm font-medium break-words">{invitation.inn}</p>
                               </div>
                               <div>
                                 <p className="text-xs text-muted-foreground mb-0.5">КПП</p>
-                                <p className="text-sm font-medium">{invitation.kpp}</p>
+                                <p className="text-sm font-medium break-words">{invitation.kpp}</p>
                               </div>
                               <div className="min-w-0">
                                 <p className="text-xs text-muted-foreground mb-0.5">Адрес</p>
-                                <p className="text-sm font-medium truncate">{invitation.address}</p>
+                                <p className="text-sm font-medium break-words">{invitation.address}</p>
                               </div>
                               <div>
                                 <p className="text-xs text-muted-foreground mb-0.5">Дата приглашения</p>
-                                <p className="text-sm font-medium">{invitation.invitedAt}</p>
+                                <p className="text-sm font-medium break-words">{invitation.invitedAt}</p>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 flex-shrink-0">
+                          <div className="flex items-start gap-3 flex-shrink-0 pt-1">
                             <Button
                               variant="outline"
                               size="sm"
