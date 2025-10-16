@@ -3,13 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 interface Counterparty {
   id: string;
@@ -18,7 +13,8 @@ interface Counterparty {
   kpp: string;
   address: string;
   status: 'invite' | 'accept' | 'in_list';
-  date: string;
+  type: 'company' | 'person';
+  city: string;
 }
 
 const mockCounterparties: Counterparty[] = [
@@ -27,45 +23,50 @@ const mockCounterparties: Counterparty[] = [
     name: 'ООО "Рога и копыта"',
     inn: '4693801631',
     kpp: '0474273962',
-    address: 'г. Москва, ул. Тверская, д. 15, офис 302',
+    address: 'ул. Тверская, д. 15, офис 302',
+    city: 'Москва',
     status: 'invite',
-    date: '01.01.2025'
+    type: 'company'
   },
   {
     id: '2',
     name: 'Дмитриев Дмитрий Дмитриевич',
-    inn: '4693801631',
-    kpp: '0474273962',
-    address: 'г. Москва, ул. Тверская, д. 15, офис 302',
-    status: 'invite',
-    date: '12.05.2025'
+    inn: '469380163155',
+    kpp: '—',
+    address: 'ул. Ленина, д. 42',
+    city: 'Санкт-Петербург',
+    status: 'accept',
+    type: 'person'
   },
   {
     id: '3',
-    name: 'ООО "Какое-то очень длинное название компании"',
+    name: 'ООО "Производственная компания Альфа"',
     inn: '1234567890',
     kpp: '0987654321',
-    address: 'г. Тульская обл., г. Новомосковск, ул. Березовая, д. 1',
-    status: 'accept',
-    date: '01.01.2025'
+    address: 'ул. Березовая, д. 1',
+    city: 'Новомосковск',
+    status: 'in_list',
+    type: 'company'
   },
   {
     id: '4',
-    name: 'Дмитриев Дмитрий Дмитриевич',
-    inn: '1234567890',
-    kpp: '0987654321',
-    address: 'г. Тульская обл., г. Новомосковск, ул. Березовая, д. 1',
-    status: 'in_list',
-    date: '12.05.2025'
+    name: 'ИП Петров Петр Петрович',
+    inn: '123456789012',
+    kpp: '—',
+    address: 'пр. Мира, д. 88',
+    city: 'Екатеринбург',
+    status: 'invite',
+    type: 'person'
   },
   {
     id: '5',
-    name: 'ООО "Рога и копыта"',
-    inn: '4693801631',
-    kpp: '0474273962',
-    address: 'г. Москва, ул. Тверская, д. 15, офис 302',
+    name: 'ООО "ТехноЛогистика"',
+    inn: '9876543210',
+    kpp: '1234567890',
+    address: 'ул. Промышленная, д. 5',
+    city: 'Казань',
     status: 'invite',
-    date: '01.01.2025'
+    type: 'company'
   }
 ];
 
@@ -74,8 +75,7 @@ const Index = () => {
   const [activeMenu, setActiveMenu] = useState('counterparties');
   const [activeSubmenu, setActiveSubmenu] = useState('invite');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'name' | 'date'>('name');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'invite' | 'accept' | 'in_list'>('all');
 
   const menuItems = [
     { id: 'counterparties', label: 'Контрагенты', icon: 'Users', hasSubmenu: true },
@@ -91,36 +91,26 @@ const Index = () => {
     { id: 'blocked', label: 'Заблокированные', count: 9999 }
   ];
 
-  const toggleRowSelection = (id: string) => {
-    setSelectedRows(prev => 
-      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
-    );
-  };
+  const filteredCounterparties = mockCounterparties.filter(c => {
+    if (filterStatus !== 'all' && c.status !== filterStatus) return false;
+    if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase()) && !c.inn.includes(searchQuery)) return false;
+    return true;
+  });
 
-  const toggleAllRows = () => {
-    setSelectedRows(prev => 
-      prev.length === mockCounterparties.length ? [] : mockCounterparties.map(c => c.id)
-    );
-  };
-
-  const getStatusBadge = (status: Counterparty['status']) => {
-    switch (status) {
-      case 'invite':
-        return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">Требует подписания</Badge>;
-      case 'accept':
-        return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">Требует подписания</Badge>;
-      case 'in_list':
-        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Подписан контрагентом</Badge>;
-    }
+  const stats = {
+    total: mockCounterparties.length,
+    invite: mockCounterparties.filter(c => c.status === 'invite').length,
+    accept: mockCounterparties.filter(c => c.status === 'accept').length,
+    in_list: mockCounterparties.filter(c => c.status === 'in_list').length
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
       {/* Main Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
+      <aside className="w-64 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 flex flex-col shadow-xl">
+        <div className="p-6 border-b border-gray-200/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center shadow-lg">
               <Icon name="Building2" size={20} className="text-white" />
             </div>
             <div>
@@ -132,7 +122,7 @@ const Index = () => {
 
         <nav className="flex-1 p-4">
           <Button
-            className="w-full mb-6 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white"
+            className="w-full mb-6 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg"
             size="lg"
           >
             <Icon name="Plus" size={16} className="mr-2" />
@@ -162,7 +152,7 @@ const Index = () => {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="p-4 border-t border-gray-200/50 space-y-2">
           <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg text-left">
             <Icon name="Settings" size={20} />
             <span className="text-sm">Настройки</span>
@@ -173,7 +163,7 @@ const Index = () => {
           </button>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200/50">
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
@@ -186,7 +176,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200/50">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center text-white text-sm font-semibold">
               ДД
@@ -201,13 +191,13 @@ const Index = () => {
 
       {/* Secondary Sidebar (Submenu) */}
       {activeMenu === 'counterparties' && (
-        <aside className="w-64 bg-white border-r border-gray-200 animate-in slide-in-from-left duration-300">
-          <div className="p-6 border-b border-gray-200">
+        <aside className="w-64 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 animate-in slide-in-from-left duration-300 shadow-xl">
+          <div className="p-6 border-b border-gray-200/50">
             <h2 className="font-semibold text-lg">Контрагенты</h2>
           </div>
           <nav className="p-4">
             <Button
-              className="w-full mb-4 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white"
+              className="w-full mb-4 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg"
             >
               <Icon name="Plus" size={16} className="mr-2" />
               Пригласить контрагентов
@@ -244,213 +234,194 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-8 py-6">
+        <div className="max-w-7xl mx-auto px-8 py-8">
+          {/* Hero Section */}
+          <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold">Пригласить контрагентов</h1>
-              <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm">
-                  <Icon name="SlidersHorizontal" size={16} className="mr-2" />
-                  Фильтры
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Icon name="Download" size={16} className="mr-2" />
-                  Удалить
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Icon name="Printer" size={16} className="mr-2" />
-                  Печать
-                </Button>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-[#2563EB] to-[#7c3aed] bg-clip-text text-transparent mb-2">
+                  Найдите контрагентов
+                </h1>
+                <p className="text-muted-foreground text-lg">
+                  Простой поиск по ИНН или названию компании
+                </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex-1 relative">
-                <Icon
-                  name="Search"
-                  size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  type="text"
-                  placeholder="Поиск"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-50 border-gray-200"
-                />
-              </div>
-              <Button className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white">
-                <Icon name="Upload" size={18} className="mr-2" />
-                Загрузить файл со списком ИНН
+              <Button size="lg" className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg">
+                <Icon name="Upload" size={20} className="mr-2" />
+                Импорт из файла
               </Button>
             </div>
+
+            {/* Search Bar */}
+            <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
+              <CardContent className="p-6">
+                <div className="relative">
+                  <Icon
+                    name="Search"
+                    size={24}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Введите ИНН или название организации..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-14 h-14 text-lg border-0 bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Toolbar */}
-          <div className="bg-white border-b border-gray-200 px-8 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <Icon name="FilePlus" size={16} />
-                      Подписать
-                      <Icon name="ChevronDown" size={14} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Подписать выбранные</DropdownMenuItem>
-                    <DropdownMenuItem>Подписать все</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'all' ? 'ring-2 ring-blue-500 shadow-lg' : ''}`}
+              onClick={() => setFilterStatus('all')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Всего найдено</p>
+                    <p className="text-3xl font-bold">{stats.total}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                    <Icon name="Users" size={24} className="text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <Icon name="UserPlus" size={16} />
-                      Согласовать
-                      <Icon name="ChevronDown" size={14} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Отправить на согласование</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'invite' ? 'ring-2 ring-purple-500 shadow-lg' : ''}`}
+              onClick={() => setFilterStatus('invite')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Пригласить</p>
+                    <p className="text-3xl font-bold">{stats.invite}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                    <Icon name="UserPlus" size={24} className="text-purple-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Icon name="FileDown" size={16} />
-                  Отклонить
-                </Button>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'accept' ? 'ring-2 ring-green-500 shadow-lg' : ''}`}
+              onClick={() => setFilterStatus('accept')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Принять</p>
+                    <p className="text-3xl font-bold">{stats.accept}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                    <Icon name="Check" size={24} className="text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <Icon name="Eye" size={16} />
-                      Аннулировать
-                      <Icon name="ChevronDown" size={14} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Аннулировать выбранные</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Icon name="Download" size={16} />
-                  Скачать
-                </Button>
-
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Icon name="Trash2" size={16} />
-                  Удалить
-                </Button>
-
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Icon name="Lock" size={16} />
-                  Печать
-                </Button>
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <Icon name="SlidersHorizontal" size={16} />
-                    Фильтры
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Все контрагенты</DropdownMenuItem>
-                  <DropdownMenuItem>Требуют подписания</DropdownMenuItem>
-                  <DropdownMenuItem>Подписанные</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'in_list' ? 'ring-2 ring-emerald-500 shadow-lg' : ''}`}
+              onClick={() => setFilterStatus('in_list')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">В списке</p>
+                    <p className="text-3xl font-bold">{stats.in_list}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                    <Icon name="CheckCircle" size={24} className="text-emerald-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Table */}
-          <div className="flex-1 overflow-auto bg-white">
-            <div className="px-8 py-4">
-              <div className="text-sm text-muted-foreground mb-4">
-                Отправитель: <button className="text-primary hover:underline">Все</button> • 
-                Документы: <button className="text-primary hover:underline">Все</button> • 
-                Дата: <button className="text-primary hover:underline">Все</button> • 
-                Статус: <button className="text-primary hover:underline">Все</button>
-              </div>
-
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 w-10">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.length === mockCounterparties.length}
-                        onChange={toggleAllRows}
-                        className="rounded border-gray-300"
+          {/* Results */}
+          <div className="space-y-4">
+            {filteredCounterparties.map((counterparty) => (
+              <Card 
+                key={counterparty.id} 
+                className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group border-0 bg-white/80 backdrop-blur-xl"
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center gap-6 p-6">
+                    {/* Icon */}
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ${
+                      counterparty.type === 'company' 
+                        ? 'bg-gradient-to-br from-blue-100 to-blue-200' 
+                        : 'bg-gradient-to-br from-purple-100 to-purple-200'
+                    }`}>
+                      <Icon 
+                        name={counterparty.type === 'company' ? 'Building2' : 'User'} 
+                        size={28} 
+                        className={counterparty.type === 'company' ? 'text-blue-600' : 'text-purple-600'}
                       />
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
-                      <div className="flex items-center gap-1">
-                        Отправитель
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Документы</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
-                      <div className="flex items-center gap-1">
-                        Дата
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900">
-                      <div className="flex items-center gap-1">
-                        Статус
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockCounterparties.map((counterparty) => (
-                    <tr 
-                      key={counterparty.id} 
-                      className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                    >
-                      <td className="py-4 px-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(counterparty.id)}
-                          onChange={() => toggleRowSelection(counterparty.id)}
-                          className="rounded border-gray-300"
-                        />
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="font-medium text-sm">{counterparty.name}</div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="space-y-1">
-                          <div className="text-sm text-primary hover:underline">
-                            Счёт на оплату №{counterparty.inn.slice(0, 4)} от {counterparty.date}.pdf
-                          </div>
-                          <div className="text-sm text-primary hover:underline">
-                            Акт об оказании услуг №{counterparty.kpp.slice(0, 4)} от {counterparty.date}.pdf
-                          </div>
-                          <div className="text-sm text-primary hover:underline">
-                            Письмо№{counterparty.id} от {counterparty.date}
-                          </div>
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors">
+                        {counterparty.name}
+                      </h3>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">ИНН:</span>
+                          <span className="ml-2 font-medium">{counterparty.inn}</span>
                         </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="text-sm">{counterparty.date}</div>
-                      </td>
-                      <td className="py-4 px-4">
-                        {getStatusBadge(counterparty.status)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <div>
+                          <span className="text-muted-foreground">КПП:</span>
+                          <span className="ml-2 font-medium">{counterparty.kpp}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Город:</span>
+                          <span className="ml-2 font-medium">{counterparty.city}</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Icon name="MapPin" size={14} />
+                        <span>{counterparty.address}</span>
+                      </div>
+                    </div>
+
+                    {/* Action */}
+                    <div className="flex-shrink-0">
+                      {counterparty.status === 'invite' && (
+                        <Button className="bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg">
+                          <Icon name="UserPlus" size={18} className="mr-2" />
+                          Пригласить
+                        </Button>
+                      )}
+                      {counterparty.status === 'accept' && (
+                        <div className="flex gap-3">
+                          <Button variant="outline" className="shadow-md">
+                            <Icon name="X" size={18} className="mr-2" />
+                            Отклонить
+                          </Button>
+                          <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 text-white shadow-lg">
+                            <Icon name="Check" size={18} className="mr-2" />
+                            Принять
+                          </Button>
+                        </div>
+                      )}
+                      {counterparty.status === 'in_list' && (
+                        <div className="flex items-center gap-2 text-green-600 font-medium">
+                          <Icon name="CheckCircle" size={20} />
+                          <span>В вашем списке</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </main>
