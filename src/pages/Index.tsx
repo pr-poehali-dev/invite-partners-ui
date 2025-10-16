@@ -128,7 +128,7 @@ const Index = () => {
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/20">
       {/* Main Sidebar */}
-      <aside className="w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200/50 flex flex-col shadow-lg">
+      <aside className="w-64 bg-white/70 backdrop-blur-xl flex flex-col shadow-xl mr-4">
         <div className="p-6 border-b border-gray-200/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center shadow-lg">
@@ -155,10 +155,10 @@ const Index = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveMenu(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
                   activeMenu === item.id
-                    ? 'bg-blue-50 text-primary font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-blue-50 text-primary font-medium shadow-md'
+                    : 'text-gray-700 hover:bg-gray-50 hover:shadow-sm'
                 }`}
               >
                 <Icon name={item.icon} size={20} />
@@ -173,19 +173,19 @@ const Index = () => {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-gray-200/50 space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg text-left">
+        <div className="p-4 mt-4 space-y-2">
+          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:shadow-md rounded-xl text-left transition-all">
             <Icon name="Settings" size={20} />
             <span className="text-sm">Настройки</span>
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg text-left">
+          <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:shadow-md rounded-xl text-left transition-all">
             <Icon name="Award" size={20} />
             <span className="text-sm">Тарифы</span>
           </button>
         </div>
 
-        <div className="p-4 border-t border-gray-200/50">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3">
+        <div className="p-4 mt-4">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-3 shadow-md">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span className="text-xs font-medium">Хранение</span>
@@ -197,7 +197,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200/50">
+        <div className="p-4 mt-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7c3aed] flex items-center justify-center text-white text-sm font-semibold">
               ДД
@@ -212,8 +212,8 @@ const Index = () => {
 
       {/* Secondary Sidebar */}
       {activeMenu === 'documents' && (
-        <aside className="w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200/50 shadow-lg">
-          <div className="p-6 border-b border-gray-200/50">
+        <aside className="w-64 bg-white/70 backdrop-blur-xl shadow-xl mr-4">
+          <div className="p-6 mb-2">
             <h2 className="font-semibold text-lg">Документы</h2>
           </div>
           <nav className="p-4">
@@ -222,10 +222,10 @@ const Index = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveSubmenu(item.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all text-sm ${
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all text-sm ${
                     activeSubmenu === item.id
-                      ? 'bg-blue-50 text-primary font-medium'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-blue-50 text-primary font-medium shadow-md'
+                      : 'text-gray-700 hover:bg-gray-50 hover:shadow-sm'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -245,7 +245,7 @@ const Index = () => {
       <main className="flex-1 overflow-auto">
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="bg-white/70 backdrop-blur-xl border-b border-gray-200/50 px-8 py-8">
+          <div className="bg-white/70 backdrop-blur-xl px-8 py-8 shadow-md mb-4">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold">Входящие документы</h1>
               <div className="flex items-center gap-3">
@@ -275,7 +275,7 @@ const Index = () => {
           </div>
 
           {/* Toolbar */}
-          <div className="bg-white/70 backdrop-blur-xl border-b border-gray-200/50 px-8 py-4">
+          <div className="bg-white/70 backdrop-blur-xl px-8 py-4 shadow-md mb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="sm" className="gap-2">
@@ -311,7 +311,7 @@ const Index = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white/70 backdrop-blur-xl px-8 py-4 border-b border-gray-100/50">
+          <div className="bg-white/70 backdrop-blur-xl px-8 py-4 shadow-md mb-4 rounded-xl mx-8">
             <div className="text-sm text-muted-foreground">
               Отправитель: <button className="text-primary hover:underline ml-1">Все</button> • 
               <span className="ml-2">Документы: <button className="text-primary hover:underline ml-1">Все</button></span> • 
@@ -326,7 +326,7 @@ const Index = () => {
               {mockDocuments.map((doc) => (
                 <Card 
                   key={doc.id} 
-                  className="bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all cursor-pointer border-0 overflow-hidden"
+                  className="bg-white/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all cursor-pointer border-0 overflow-hidden rounded-2xl"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start gap-6">
