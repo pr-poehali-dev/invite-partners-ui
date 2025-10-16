@@ -81,10 +81,23 @@ const Index = () => {
         );
       case 'accept':
         return (
-          <Button className="bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-90 text-white">
-            <Icon name="UserCheck" size={16} className="mr-2" />
-            Принять приглашение
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Icon name="X" size={16} />
+              Отклонить
+            </Button>
+            <Button
+              size="sm"
+              className="gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-90 text-white"
+            >
+              <Icon name="Check" size={16} />
+              Принять
+            </Button>
+          </div>
         );
       case 'in_list':
         return (
