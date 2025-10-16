@@ -327,10 +327,11 @@ const Index = () => {
                 <Card 
                   key={doc.id} 
                   className="bg-white/90 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all cursor-pointer border-0 overflow-hidden rounded-2xl"
+                  onClick={() => navigate(`/document/${doc.id}`)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start gap-6">
-                      <div className="pt-1">
+                      <div className="pt-1" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(doc.id)}
