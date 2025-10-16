@@ -271,6 +271,13 @@ const Index = () => {
               </Button>
             </div>
 
+            {/* Results Count */}
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground">
+                Найдено контрагентов: <span className="font-semibold text-foreground">{mockCounterparties.length}</span>
+              </p>
+            </div>
+
             {/* Counterparty Cards */}
             <div className="space-y-4">
               {mockCounterparties.map((counterparty) => (
