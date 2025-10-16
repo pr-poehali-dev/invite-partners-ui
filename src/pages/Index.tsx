@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -50,6 +51,7 @@ const mockCounterparties: Counterparty[] = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState('counterparties');
   const [activeSubmenu, setActiveSubmenu] = useState('invite');
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,7 +66,7 @@ const Index = () => {
   const submenuItems = [
     { id: 'invite', label: 'Пригласить контрагента' },
     { id: 'your_counterparties', label: 'Ваши контрагенты', count: 9999 },
-    { id: 'invitations', label: 'Приглашения вас', count: 9999 },
+    { id: 'invitations', label: 'Приглашения вас', count: 9999, link: '/invitations' },
     { id: 'blocked', label: 'Заблокированные', count: 9999 }
   ];
 
@@ -196,7 +198,13 @@ const Index = () => {
               {submenuItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveSubmenu(item.id)}
+                  onClick={() => {
+                    if (item.link) {
+                      navigate(item.link);
+                    } else {
+                      setActiveSubmenu(item.id);
+                    }
+                  }}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all text-sm ${
                     activeSubmenu === item.id
                       ? 'bg-blue-50 text-primary font-medium'
