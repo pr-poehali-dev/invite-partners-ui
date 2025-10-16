@@ -255,30 +255,30 @@ const Index = () => {
               {mockCounterparties.map((counterparty) => (
                 <Card key={counterparty.id} className="overflow-hidden hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
-                    <div className="flex items-start justify-between gap-6">
-                      <div className="flex items-start gap-6 flex-1 min-w-0">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
-                          <Icon name="Building2" size={28} className="text-gray-500" />
+                    <div className="flex items-center justify-between gap-8">
+                      <div className="flex items-center gap-5 flex-1 min-w-0">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                          <Icon name="Building2" size={26} className="text-gray-500" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-lg mb-3">{counterparty.name}</h3>
-                          <div className="grid grid-cols-3 gap-x-6 gap-y-2">
-                            <div>
-                              <p className="text-xs text-muted-foreground mb-1">ИНН</p>
-                              <p className="text-sm font-medium">{counterparty.inn}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground mb-1">КПП</p>
-                              <p className="text-sm font-medium">{counterparty.kpp}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground mb-1">Адрес</p>
-                              <p className="text-sm font-medium">{counterparty.address}</p>
-                            </div>
+                        <div className="flex-1 min-w-0 grid grid-cols-[2fr_1fr_1fr_2fr] gap-6 items-center">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-base truncate">{counterparty.name}</h3>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-0.5">ИНН</p>
+                            <p className="text-sm font-medium">{counterparty.inn}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-0.5">КПП</p>
+                            <p className="text-sm font-medium">{counterparty.kpp}</p>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs text-muted-foreground mb-0.5">Адрес</p>
+                            <p className="text-sm font-medium truncate">{counterparty.address}</p>
                           </div>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 ml-4">{getStatusButton(counterparty.status)}</div>
+                      <div className="flex-shrink-0">{getStatusButton(counterparty.status)}</div>
                     </div>
                   </CardContent>
                 </Card>
