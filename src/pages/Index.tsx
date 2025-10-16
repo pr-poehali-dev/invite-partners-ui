@@ -218,8 +218,8 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="p-8">
-          <div className="max-w-5xl">
+        <div className="px-20 py-8">
+          <div className="w-full">
             <h1 className="text-3xl font-bold mb-8">Пригласить контрагентов</h1>
             <p className="text-muted-foreground mb-6">
               Найдите нужных вам контрагентов любым удобным способом
