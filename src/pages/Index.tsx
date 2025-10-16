@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 
 interface Document {
@@ -319,77 +320,56 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Table */}
-          <div className="flex-1 overflow-auto bg-gradient-to-b from-white/70 to-white/50">
-            <div className="px-8 py-4">
-              <table className="w-full">
-                <thead className="sticky top-0 bg-white/90 backdrop-blur-xl z-10">
-                  <tr className="border-b border-gray-200/50">
-                    <th className="text-left py-3 px-4 w-10">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.length === mockDocuments.length}
-                        onChange={toggleAllRows}
-                        className="rounded border-gray-300"
-                      />
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900">
-                        Отправитель
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Документы</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900">
-                        Дата
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900">
-                        Статус
-                        <Icon name="ChevronDown" size={14} />
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockDocuments.map((doc) => (
-                    <tr 
-                      key={doc.id} 
-                      className="border-b border-gray-100/50 hover:bg-white/60 cursor-pointer transition-colors"
-                    >
-                      <td className="py-4 px-4">
+          {/* Cards List */}
+          <div className="flex-1 overflow-auto bg-gradient-to-b from-white/70 to-white/50 p-8">
+            <div className="space-y-5">
+              {mockDocuments.map((doc) => (
+                <Card 
+                  key={doc.id} 
+                  className="bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all cursor-pointer border-0 overflow-hidden"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-6">
+                      <div className="pt-1">
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(doc.id)}
                           onChange={() => toggleRowSelection(doc.id)}
-                          className="rounded border-gray-300"
+                          className="rounded border-gray-300 w-5 h-5"
                         />
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="font-medium text-sm">{doc.sender}</div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="space-y-1">
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                <Icon name="Building2" size={20} className="text-blue-600" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-base text-gray-900">{doc.sender}</h3>
+                                <p className="text-sm text-muted-foreground">{doc.date}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            {getStatusBadge(doc.status)}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 pl-13">
                           {doc.documents.map((docName, idx) => (
-                            <div key={idx} className="text-sm text-primary hover:underline">
-                              {docName}
+                            <div key={idx} className="flex items-center gap-2 text-sm text-primary hover:underline">
+                              <Icon name="FileText" size={16} className="flex-shrink-0" />
+                              <span>{docName}</span>
                             </div>
                           ))}
                         </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="text-sm">{doc.date}</div>
-                      </td>
-                      <td className="py-4 px-4">
-                        {getStatusBadge(doc.status)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
