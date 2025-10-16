@@ -120,7 +120,7 @@ const Index = () => {
           </div>
         </div>
 
-        <nav className="flex-1 p-4 overflow-y-auto">
+        <nav className="flex-1 p-4">
           <Button
             className="w-full mb-6 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg"
             size="lg"
@@ -129,65 +129,26 @@ const Index = () => {
             Новый документ
           </Button>
 
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
-                Контрагенты
-              </h3>
-              <div className="space-y-1">
-                {submenuItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      if (item.link) {
-                        navigate(item.link);
-                      } else {
-                        setActiveSubmenu(item.id);
-                      }
-                    }}
-                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all text-sm ${
-                      activeSubmenu === item.id
-                        ? 'bg-blue-50 text-primary font-medium'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    {item.count && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.count}
-                      </Badge>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-200/50">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
-                Прочее
-              </h3>
-              <div className="space-y-1">
-                {menuItems.filter(item => item.id !== 'counterparties').map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveMenu(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left transition-all ${
-                      activeMenu === item.id
-                        ? 'bg-blue-50 text-primary font-medium'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon name={item.icon} size={18} />
-                    <span className="flex-1 text-sm">{item.label}</span>
-                    {item.count && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.count}
-                      </Badge>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <div className="space-y-1">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveMenu(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
+                  activeMenu === item.id
+                    ? 'bg-blue-50 text-primary font-medium'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <Icon name={item.icon} size={20} />
+                <span className="flex-1 text-sm">{item.label}</span>
+                {item.count && (
+                  <Badge variant="secondary" className="text-xs">
+                    {item.count}
+                  </Badge>
+                )}
+              </button>
+            ))}
           </div>
         </nav>
 
@@ -228,6 +189,50 @@ const Index = () => {
         </div>
       </aside>
 
+      {/* Secondary Sidebar */}
+      {activeMenu === 'counterparties' && (
+        <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 animate-in slide-in-from-left duration-300 shadow-xl">
+          <div className="p-6 border-b border-gray-200/50">
+            <h2 className="font-semibold text-lg">Контрагенты</h2>
+            <p className="text-xs text-muted-foreground mt-1">Управление контрагентами</p>
+          </div>
+          <nav className="p-4">
+            <Button
+              className="w-full mb-4 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg"
+            >
+              <Icon name="Plus" size={16} className="mr-2" />
+              Пригласить контрагентов
+            </Button>
+            <div className="space-y-1">
+              {submenuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (item.link) {
+                      navigate(item.link);
+                    } else {
+                      setActiveSubmenu(item.id);
+                    }
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all text-sm ${
+                    activeSubmenu === item.id
+                      ? 'bg-blue-50 text-primary font-medium'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {item.count && (
+                    <Badge variant="secondary" className="text-xs">
+                      {item.count}
+                    </Badge>
+                  )}
+                </button>
+              ))}
+            </div>
+          </nav>
+        </aside>
+      )}
+
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         <div className="max-w-7xl mx-auto px-8 py-8">
@@ -264,77 +269,6 @@ const Index = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-14 h-14 text-lg border-0 bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500"
                   />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
-            <Card 
-              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'all' ? 'ring-2 ring-blue-500 shadow-lg' : ''}`}
-              onClick={() => setFilterStatus('all')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Всего найдено</p>
-                    <p className="text-3xl font-bold">{stats.total}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                    <Icon name="Users" size={24} className="text-blue-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'invite' ? 'ring-2 ring-purple-500 shadow-lg' : ''}`}
-              onClick={() => setFilterStatus('invite')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Пригласить</p>
-                    <p className="text-3xl font-bold">{stats.invite}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                    <Icon name="UserPlus" size={24} className="text-purple-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'accept' ? 'ring-2 ring-green-500 shadow-lg' : ''}`}
-              onClick={() => setFilterStatus('accept')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Принять</p>
-                    <p className="text-3xl font-bold">{stats.accept}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                    <Icon name="Check" size={24} className="text-green-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className={`cursor-pointer transition-all hover:shadow-lg ${filterStatus === 'in_list' ? 'ring-2 ring-emerald-500 shadow-lg' : ''}`}
-              onClick={() => setFilterStatus('in_list')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">В списке</p>
-                    <p className="text-3xl font-bold">{stats.in_list}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                    <Icon name="CheckCircle" size={24} className="text-emerald-600" />
-                  </div>
                 </div>
               </CardContent>
             </Card>
