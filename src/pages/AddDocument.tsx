@@ -27,6 +27,21 @@ interface UploadedFile extends File {
   preview?: string;
 }
 
+interface Counterparty {
+  id: string;
+  name: string;
+  inn: string;
+}
+
+const mockCounterparties: Counterparty[] = [
+  { id: "1", name: 'ООО "Альфа"', inn: "7701234567" },
+  { id: "2", name: 'ООО "Бета Технологии"', inn: "7702345678" },
+  { id: "3", name: 'АО "Гамма Сервис"', inn: "7703456789" },
+  { id: "4", name: "ИП Иванов И.И.", inn: "770456789012" },
+  { id: "5", name: 'ООО "Дельта"', inn: "7705567890" },
+  { id: "6", name: 'ООО "Эпсилон Плюс"', inn: "7706678901" },
+];
+
 const mockSignatures: ElectronicSignature[] = [
   {
     id: "1",
@@ -61,6 +76,9 @@ const AddDocument = () => {
   const [selectedSignature, setSelectedSignature] = useState<string>("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeMenu, setActiveMenu] = useState('documents');
+  const [counterpartySearch, setCounterpartySearch] = useState("");
+  const [showCounterpartyDropdown, setShowCounterpartyDropdown] = useState(false);
+  const [selectedCounterparty, setSelectedCounterparty] = useState<Counterparty | null>(null);
 
   const menuItems = [
     { id: 'documents', label: 'Документы', icon: 'FileText', count: 9999 },
@@ -138,6 +156,17 @@ const AddDocument = () => {
       default:
         return 'File';
     }
+  };
+
+  const filteredCounterparties = mockCounterparties.filter(cp => 
+    cp.name.toLowerCase().includes(counterpartySearch.toLowerCase()) ||
+    cp.inn.includes(counterpartySearch)
+  );
+
+  const handleCounterpartySelect = (counterparty: Counterparty) => {
+    setSelectedCounterparty(counterparty);
+    setCounterpartySearch(counterparty.name);
+    setShowCounterpartyDropdown(false);
   };
 
   return (
@@ -279,21 +308,51 @@ const AddDocument = () => {
                         />
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-2 relative">
                         <label className="text-sm font-medium text-gray-700">
                           Контрагент *
                         </label>
-                        <Select>
-                          <SelectTrigger className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]">
-                            <SelectValue placeholder="Выберите контрагента" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="org1">ООО "Альфа"</SelectItem>
-                            <SelectItem value="org2">ООО "Бета Технологии"</SelectItem>
-                            <SelectItem value="org3">АО "Гамма Сервис"</SelectItem>
-                            <SelectItem value="org4">ИП Иванов И.И.</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <div className="relative">
+                          <Input
+                            placeholder="Начните вводить название или ИНН"
+                            value={counterpartySearch}
+                            onChange={(e) => {
+                              setCounterpartySearch(e.target.value);
+                              setShowCounterpartyDropdown(true);
+                              if (!e.target.value) {
+                                setSelectedCounterparty(null);
+                              }
+                            }}
+                            onFocus={() => setShowCounterpartyDropdown(true)}
+                            className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                          />
+                          <Icon 
+                            name="Search" 
+                            size={18} 
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                          />
+                        </div>
+                        {showCounterpartyDropdown && counterpartySearch && filteredCounterparties.length > 0 && (
+                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {filteredCounterparties.map((cp) => (
+                              <button
+                                key={cp.id}
+                                type="button"
+                                onClick={() => handleCounterpartySelect(cp)}
+                                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                              >
+                                <div className="font-medium text-sm text-gray-900">{cp.name}</div>
+                                <div className="text-xs text-gray-500 mt-1">ИНН: {cp.inn}</div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {selectedCounterparty && (
+                          <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
+                            <Icon name="CheckCircle2" size={14} className="text-green-600" />
+                            <span>ИНН: {selectedCounterparty.inn}</span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-2">
