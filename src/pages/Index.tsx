@@ -249,6 +249,13 @@ const Index = () => {
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold">Входящие документы</h1>
               <div className="flex items-center gap-3">
+                <Button
+                  onClick={() => navigate('/add-document')}
+                  className="bg-[#39587C] hover:bg-[#2d4560] text-white shadow-lg"
+                >
+                  <Icon name="Plus" size={16} className="mr-2" />
+                  Добавить документ
+                </Button>
                 <Button variant="outline" size="sm">
                   <Icon name="SlidersHorizontal" size={16} className="mr-2" />
                   Фильтры
