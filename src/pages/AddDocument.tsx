@@ -80,6 +80,8 @@ const AddDocument = () => {
   const [showCounterpartyDropdown, setShowCounterpartyDropdown] = useState(false);
   const [selectedCounterparty, setSelectedCounterparty] = useState<Counterparty | null>(null);
   const [documentType, setDocumentType] = useState<string>("");
+  const [selectedSigner, setSelectedSigner] = useState<string>("");
+  const [powerOfAttorney, setPowerOfAttorney] = useState<File | null>(null);
 
   const menuItems = [
     { id: 'documents', label: 'Документы', icon: 'FileText', count: 9999 },
@@ -374,6 +376,64 @@ const AddDocument = () => {
                           type="date"
                           className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
                         />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          Подписант *
+                        </label>
+                        <Select onValueChange={setSelectedSigner} value={selectedSigner}>
+                          <SelectTrigger className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]">
+                            <SelectValue placeholder="Выберите подписанта" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockSignatures.map((signature) => (
+                              <SelectItem key={signature.id} value={signature.id}>
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{signature.name}</span>
+                                  <span className="text-xs text-gray-500">{signature.organization}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          Доверенность
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <label className="flex-1 cursor-pointer">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#39587C] transition-colors">
+                              <div className="flex items-center gap-2 text-sm">
+                                <Icon name="Upload" size={16} className="text-gray-500" />
+                                <span className="text-gray-600">
+                                  {powerOfAttorney ? powerOfAttorney.name : 'Прикрепить доверенность (необязательно)'}
+                                </span>
+                              </div>
+                            </div>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) setPowerOfAttorney(file);
+                              }}
+                            />
+                          </label>
+                          {powerOfAttorney && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setPowerOfAttorney(null)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Icon name="X" size={16} />
+                            </Button>
+                          )}
+                        </div>
                       </div>
 
                       {documentType === 'act' && (
