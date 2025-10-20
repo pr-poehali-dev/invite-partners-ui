@@ -79,6 +79,7 @@ const AddDocument = () => {
   const [counterpartySearch, setCounterpartySearch] = useState("");
   const [showCounterpartyDropdown, setShowCounterpartyDropdown] = useState(false);
   const [selectedCounterparty, setSelectedCounterparty] = useState<Counterparty | null>(null);
+  const [documentType, setDocumentType] = useState<string>("");
 
   const menuItems = [
     { id: 'documents', label: 'Документы', icon: 'FileText', count: 9999 },
@@ -359,7 +360,7 @@ const AddDocument = () => {
                         <label className="text-sm font-medium text-gray-700">
                           Тип документа *
                         </label>
-                        <Select>
+                        <Select onValueChange={setDocumentType} value={documentType}>
                           <SelectTrigger className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]">
                             <SelectValue placeholder="Выберите тип" />
                           </SelectTrigger>
@@ -393,6 +394,130 @@ const AddDocument = () => {
                           className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
                         />
                       </div>
+
+                      {documentType === 'act' && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Период выполнения работ *
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                type="date"
+                                placeholder="с"
+                                className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                              />
+                              <Input
+                                type="date"
+                                placeholder="по"
+                                className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Стоимость работ *
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="0.00"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {documentType === 'invoice' && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Сумма к оплате *
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="0.00"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Срок оплаты
+                            </label>
+                            <Input
+                              type="date"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {documentType === 'upd' && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Сумма без НДС *
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="0.00"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              НДС (20%)
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="Рассчитается автоматически"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C] bg-gray-50"
+                              disabled
+                            />
+                          </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Общая сумма с НДС
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="Рассчитается автоматически"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C] bg-gray-50"
+                              disabled
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {documentType === 'contract' && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Предмет договора *
+                            </label>
+                            <Input
+                              placeholder="Например: Оказание услуг"
+                              className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                              Срок действия
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                type="date"
+                                placeholder="с"
+                                className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                              />
+                              <Input
+                                type="date"
+                                placeholder="по"
+                                className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
 
                       <div className="space-y-2 md:col-span-2">
                         <label className="text-sm font-medium text-gray-700">
