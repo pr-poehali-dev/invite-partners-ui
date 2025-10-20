@@ -299,17 +299,7 @@ const AddDocument = () => {
                     </h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2 md:col-span-2">
-                        <label className="text-sm font-medium text-gray-700">
-                          Название пакета *
-                        </label>
-                        <Input
-                          placeholder="Например: Договор и акты за октябрь"
-                          className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
-                        />
-                      </div>
-
-                      <div className="space-y-2 relative">
+                      <div className="space-y-2 relative md:col-span-2">
                         <label className="text-sm font-medium text-gray-700">
                           Контрагент *
                         </label>
