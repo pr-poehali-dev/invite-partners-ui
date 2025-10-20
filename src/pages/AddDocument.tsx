@@ -268,22 +268,13 @@ const AddDocument = () => {
                 <h1 className="text-2xl font-bold text-gray-900">Создание пакета документов</h1>
                 <p className="text-sm text-gray-500">Заполните форму, выберите подписанта и загрузите файлы</p>
               </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate("/")}
-                  className="border-gray-300"
-                >
-                  Отмена
-                </Button>
-                <Button
-                  className="bg-[#39587C] hover:bg-[#2d4560] text-white shadow-lg"
-                  disabled={files.length === 0 || !selectedSignature}
-                >
-                  <Icon name="Send" size={18} className="mr-2" />
-                  Отправить пакет ({files.length})
-                </Button>
-              </div>
+              <Button
+                className="bg-[#39587C] hover:bg-[#2d4560] text-white shadow-lg"
+                disabled={files.length === 0 || !selectedSignature}
+              >
+                <Icon name="Send" size={18} className="mr-2" />
+                Отправить пакет ({files.length})
+              </Button>
             </div>
           </div>
         </header>
