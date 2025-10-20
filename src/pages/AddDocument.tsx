@@ -259,9 +259,8 @@ const AddDocument = () => {
         </header>
 
         <div className="flex-1 overflow-auto px-8 py-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="space-y-6">
                 <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
                   <CardContent className="p-8">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
@@ -334,6 +333,24 @@ const AddDocument = () => {
                           type="date"
                           className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]"
                         />
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          Электронная подпись *
+                        </label>
+                        <Select onValueChange={setSelectedSignature} value={selectedSignature}>
+                          <SelectTrigger className="border-gray-300 focus:border-[#39587C] focus:ring-[#39587C]">
+                            <SelectValue placeholder="Выберите подпись для отправки" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockSignatures.map((signature) => (
+                              <SelectItem key={signature.id} value={signature.id}>
+                                {signature.name} ({signature.organization}, {signature.issuer}, до {signature.validUntil})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="space-y-2 md:col-span-2">
@@ -556,86 +573,6 @@ const AddDocument = () => {
                     )}
                   </CardContent>
                 </Card>
-              </div>
-
-              <div className="space-y-6">
-                <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
-                  <CardContent className="p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <Icon name="PenTool" size={20} className="text-[#39587C]" />
-                      Электронная подпись
-                      {selectedSignature && (
-                        <Badge className="bg-green-100 text-green-700 ml-2">
-                          Выбрана
-                        </Badge>
-                      )}
-                    </h2>
-                    <p className="text-sm text-gray-500 mb-6">
-                      Выберите ЭП для подписания пакета
-                    </p>
-
-                    <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                      {mockSignatures.map((signature) => (
-                        <div
-                          key={signature.id}
-                          onClick={() => setSelectedSignature(signature.id)}
-                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                            selectedSignature === signature.id
-                              ? 'border-[#39587C] bg-[#39587C]/5 shadow-md'
-                              : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                              selectedSignature === signature.id
-                                ? 'bg-[#39587C] border-[#39587C]'
-                                : 'border-gray-300'
-                            }`}>
-                              {selectedSignature === signature.id && (
-                                <div className="w-2 h-2 rounded-full bg-white"></div>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#39587C] to-[#2d4560] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
-                                  <Icon name="Key" size={14} />
-                                </div>
-                                <p className="text-sm font-semibold text-gray-900 truncate">
-                                  {signature.name}
-                                </p>
-                              </div>
-                              <div className="space-y-1 text-xs">
-                                <p className="text-gray-700 font-medium truncate">
-                                  {signature.organization}
-                                </p>
-                                <p className="text-gray-500">
-                                  ИНН: {signature.inn}
-                                </p>
-                                <p className="text-gray-500">
-                                  УЦ: {signature.issuer}
-                                </p>
-                                <div className="flex items-center gap-1 pt-1">
-                                  <Icon name="Calendar" size={12} className="text-green-600" />
-                                  <span className="text-green-600 font-medium">
-                                    до {signature.validUntil}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full mt-4 border-[#39587C] text-[#39587C] hover:bg-[#39587C]/10"
-                    >
-                      <Icon name="Plus" size={16} className="mr-2" />
-                      Добавить ЭП
-                    </Button>
-                  </CardContent>
-                </Card>
 
                 {selectedSignature && files.length > 0 && (
                   <Card className="bg-gradient-to-br from-[#39587C]/10 to-blue-50 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
@@ -668,7 +605,6 @@ const AddDocument = () => {
                     </CardContent>
                   </Card>
                 )}
-              </div>
             </div>
           </div>
         </div>
