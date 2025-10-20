@@ -280,8 +280,8 @@ const AddDocument = () => {
         </header>
 
         <div className="flex-1 overflow-auto px-8 py-8">
-          <div className="max-w-5xl mx-auto">
-            <div className="space-y-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
                   <CardContent className="p-8">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
@@ -289,8 +289,8 @@ const AddDocument = () => {
                       Информация о пакете
                     </h2>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2 relative md:col-span-2">
+                    <div className="space-y-6">
+                      <div className="space-y-2 relative">
                         <label className="text-sm font-medium text-gray-700">
                           Контрагент *
                         </label>
@@ -455,7 +455,7 @@ const AddDocument = () => {
                               disabled
                             />
                           </div>
-                          <div className="space-y-2 md:col-span-2">
+                          <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">
                               Общая сумма с НДС
                             </label>
@@ -500,7 +500,7 @@ const AddDocument = () => {
                         </>
                       )}
 
-                      <div className="space-y-2 md:col-span-2">
+                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
                           Электронная подпись *
                         </label>
@@ -518,7 +518,7 @@ const AddDocument = () => {
                         </Select>
                       </div>
 
-                      <div className="space-y-2 md:col-span-2">
+                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
                           Комментарий
                         </label>
