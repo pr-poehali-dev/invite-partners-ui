@@ -145,6 +145,7 @@ const Index = () => {
           <Button
             className="w-full mb-6 bg-gradient-to-r from-[#2563EB] to-[#7c3aed] hover:opacity-90 text-white shadow-lg"
             size="lg"
+            onClick={() => navigate('/add-document')}
           >
             <Icon name="Plus" size={16} className="mr-2" />
             Новый документ
